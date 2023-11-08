@@ -1,0 +1,39 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] float playerSpeed = 10f;
+    Vector2 moveInput;
+    Rigidbody2D Rigidbody;
+    Animator myAnimator;
+    void Start()
+    {
+        Rigidbody = GetComponent<Rigidbody2D>();
+        myAnimator = GetComponent<Animator>();
+    }
+    void Update()
+    {
+        run();
+        FlipSprite();
+    }   
+    void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
+    }    
+    void run()
+    {
+        Vector2 playerVelocity = new Vector2(moveInput.x*playerSpeed, Rigidbody.velocity.y);
+        Rigidbody.velocity = playerVelocity;
+        bool playerHasHorizontalSpeed = Mathf.Abs(Rigidbody.velocity.x) > Mathf.Epsilon;
+        myAnimator.SetBool("isRunning", playerHasHorizontalSpeed);
+    }
+    void FlipSprite()
+    {
+        bool playerHasHorizontalSpeed = Mathf.Abs(Rigidbody.velocity.x) > Mathf.Epsilon;
+        if (playerHasHorizontalSpeed)
+        {
+            transform.localScale = new Vector2(Mathf.Sign(Rigidbody.velocity.x), 1f);
+        }
+    }
+}
